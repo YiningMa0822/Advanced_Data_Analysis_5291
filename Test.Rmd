@@ -1,0 +1,50 @@
+---
+title: "Test"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+Y = read.csv("y_train_scale.csv", header = TRUE, sep = ",")
+X = read.csv("x_train_scale.csv", header = TRUE, sep = ",")
+library(moments)
+library(zoo)
+library(lmtest)
+library(sandwich)
+```
+
+```{r}
+Y_col = Y[, 1]
+X_cols = X[, 2:20]
+
+# Fit the linear regression model
+model = lm(Y_col ~ ., data = cbind(Y_col, X_cols))
+summary(model)
+```
+
+1. Shapiro Test
+```{r}
+shapiro.test(residuals(model))
+```
+
+2. Jarque–Bera Test
+```{r}
+jarque.test(residuals(model))
+```
+
+3. Breusch-Pagan Test
+```{r}
+bptest(model)
+```
+
+4. Durbin-Watson test
+```{r}
+dwtest(model)
+```
+
+5. Newey West
+```{r}
+coeftest(model, vcov = NeweyWest(model))
+```
